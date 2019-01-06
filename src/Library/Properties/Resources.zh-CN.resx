@@ -112,9 +112,39 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="WizardBackButtonToolTip" xml:space="preserve">
+    <value>返回上一页</value>
+  </data>
+  <data name="WizardBackText" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="WizardCancelText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="WizardFinishText" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="WizardHeader" xml:space="preserve">
+    <value>页面标题</value>
+  </data>
+  <data name="WizardHelpText" xml:space="preserve">
+    <value>帮助</value>
+  </data>
+  <data name="WizardNextText" xml:space="preserve">
+    <value>下一个</value>
+  </data>
+  <data name="WizardNoPagesNotice" xml:space="preserve">
+    <value>未添加向导页。</value>
+  </data>
+  <data name="WizardTitle" xml:space="preserve">
+    <value>向导标题</value>
+  </data>
+  <data name="WizardPageDefaultHelpText" xml:space="preserve">
+    <value>帮助</value>
+  </data>
 </root>

@@ -117,4 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="WizardNextText" xml:space="preserve">
+    <value>&amp;Далее</value>
+  </data>
+  <data name="WizardPageDefaultHelpText" xml:space="preserve">
+    <value>Справка</value>
+  </data>
+  <data name="WizardHelpText" xml:space="preserve">
+    <value>&amp;Справка</value>
+  </data>
+  <data name="WizardBackButtonToolTip" xml:space="preserve">
+    <value>Возврат на предыдущую страницу</value>
+  </data>
+  <data name="WizardBackText" xml:space="preserve">
+    <value>&amp;Назад</value>
+  </data>
+  <data name="WizardCancelText" xml:space="preserve">
+    <value>&amp;Отмена</value>
+  </data>
+  <data name="WizardFinishText" xml:space="preserve">
+    <value>&amp;Закончить</value>
+  </data>
+  <data name="WizardHeader" xml:space="preserve">
+    <value>Заголовок страницы</value>
+  </data>
+  <data name="WizardNoPagesNotice" xml:space="preserve">
+    <value>Страницы мастера не были добавлены.</value>
+  </data>
+  <data name="WizardTitle" xml:space="preserve">
+    <value>Название мастера</value>
+  </data>
 </root>

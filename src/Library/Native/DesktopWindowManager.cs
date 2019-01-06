@@ -7,7 +7,6 @@ namespace Vanara.Interop.DesktopWindowManager
 {
 	/// <summary>Main DWM class, provides glass sheet effect and blur behind.</summary>
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
-	[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
 	[System.Security.SecuritySafeCritical]
 	public static class DesktopWindowManager
 	{
@@ -15,12 +14,11 @@ namespace Vanara.Interop.DesktopWindowManager
 		private static MessageWindow _window;
 		private static readonly object ColorizationColorChangedKey = new object();
 		private static readonly object CompositionChangedKey = new object();
+		private static readonly object NonClientRenderingChangedKey = new object();
 		private static EventHandlerList eventHandlerList;
 
 		//static object WindowMaximizedChangedKey = new object();
 		private static readonly object[] keys = new object[] { CompositionChangedKey, NonClientRenderingChangedKey, ColorizationColorChangedKey/*, WindowMaximizedChangedKey*/ };
-
-		private static readonly object NonClientRenderingChangedKey = new object();
 
 		/// <summary>Occurs when the colorization color has changed.</summary>
 		public static event EventHandler ColorizationColorChanged
@@ -365,10 +363,8 @@ namespace Vanara.Interop.DesktopWindowManager
 		{
 			lock (_lock)
 			{
-				if (_window == null)
-					_window = new MessageWindow();
-				if (eventHandlerList == null)
-					eventHandlerList = new EventHandlerList();
+				_window ??= new MessageWindow();
+				eventHandlerList ??= new EventHandlerList();
 				eventHandlerList.AddHandler(id, value);
 			}
 		}
@@ -384,7 +380,6 @@ namespace Vanara.Interop.DesktopWindowManager
 			}
 		}
 
-		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
 		[System.Security.SecuritySafeCritical]
 		private class MessageWindow : NativeWindow, IDisposable
 		{
@@ -403,7 +398,6 @@ namespace Vanara.Interop.DesktopWindowManager
 
 			public void Dispose() => DestroyHandle();
 
-			[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
 			protected override void WndProc(ref Message m)
 			{
 				if (m.Msg >= WM_DWMCOMPOSITIONCHANGED && m.Msg <= WM_DWMCOLORIZATIONCOLORCHANGED)
@@ -418,7 +412,7 @@ namespace Vanara.Interop.DesktopWindowManager
 				{
 					lock (_lock)
 					{
-						try { ((EventHandler)eventHandlerList[keys[idx]]).Invoke(null, EventArgs.Empty); }
+						try { ((EventHandler)eventHandlerList[keys[idx]])?.Invoke(null, EventArgs.Empty); }
 						catch { };
 					}
 				}

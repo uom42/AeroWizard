@@ -27,7 +27,6 @@ namespace System.Runtime.InteropServices
 		{
 			if (size < 0)
 				throw new ArgumentOutOfRangeException(nameof(size), "The value of this argument must be non-negative");
-			System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions();
 			SetHandle(Marshal.AllocHGlobal(size));
 			Size = size;
 		}
@@ -141,8 +140,7 @@ namespace System.Runtime.InteropServices
 		/// <param name="children">Collection of SafeHGlobalHandle objects referred to by this object.</param>
 		public void AddSubReference(IEnumerable<SafeHGlobalHandle> children)
 		{
-			if (references == null)
-				references = new List<SafeHGlobalHandle>();
+			references ??= new List<SafeHGlobalHandle>();
 			references.AddRange(children);
 		}
 
