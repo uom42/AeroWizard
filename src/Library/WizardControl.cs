@@ -2,6 +2,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -24,6 +25,8 @@ namespace AeroWizard
         Automatic
     }
 
+
+
     /// <summary>Control providing an "Aero Wizard" style interface.</summary>
     [Designer( typeof( Design.WizardControlDesigner ) )]
     [ToolboxItem( true ), ToolboxBitmap( typeof( WizardControl ) , "WizardControl.bmp" )]
@@ -31,10 +34,10 @@ namespace AeroWizard
     [DefaultProperty( "Pages" ), DefaultEvent( "SelectedPageChanged" )]
     public partial class WizardControl :
 #if DEBUG
-        UserControl
+        //UserControl
 #else
-		Control
 #endif
+        UserControl
         , ISupportInitialize
     {
         internal int contentCol = 1;
@@ -64,6 +67,50 @@ namespace AeroWizard
             Pages.ItemAdded += Pages_ItemAdded;
             Pages.ItemDeleted += Pages_ItemDeleted;
         }
+
+
+        #region override Properties
+
+        /// <summary>Gets or sets the title for the wizard.</summary>
+        /// <value>The title text.</value>
+        [Category( "Wizard" ), Localizable( true ), Description( "Title for the wizard" )]
+        public override string Text
+        {
+            get => title.Text;
+            set
+            {
+                title.Text = value;
+                Invalidate();
+            }
+        }
+
+        /// <summary>Gets or sets the optionally displayed icon next to the wizard title.</summary>
+        /// <value>The title icon.</value>
+        [Category( "Wizard" ), Localizable( true ), Description( "Icon next to the wizard title" )]
+        public Icon TitleIcon
+        {
+            get => titleImageIcon;
+            set
+            {
+                titleImageIcon = value;
+                titleImageList.Images.Clear();
+                if ( titleImageIcon != null )
+                {
+                    // Resolve for different DPI settings and ensure that if icon is not a standard size, such as 20x20, that the larger one
+                    // (24x24) is downsized and not the smaller up-sized. (thanks demidov)
+                    titleImage.Size = titleImageList.ImageSize = SystemInformation.SmallIconSize;
+                    titleImageList.Images.Add( new Icon( value , SystemInformation.SmallIconSize + new Size( 1 , 1 ) ) );
+                    titleImage.ImageIndex = 0;
+                }
+                titleImageIconSet = true;
+                Invalidate();
+            }
+        }
+
+
+
+        #endregion
+
 
         /// <summary>Occurs when the user clicks the Cancel button and allows for programmatic cancellation.</summary>
         [Category ("Behavior"), Description ("Occurs when the user clicks the Cancel button and allows for programmatic cancellation.")]
@@ -159,10 +206,14 @@ namespace AeroWizard
         /// <value>The page header text.</value>
         [Browsable( false ), EditorBrowsable( EditorBrowsableState.Never ),
         DesignerSerializationVisibility( DesignerSerializationVisibility.Hidden )]
-        public string HeaderText
+        public string PageHeaderText
         {
             get => headerLabel.Text;
-            set { headerLabel.Text = value; Refresh(); }
+            set
+            {
+                headerLabel.Text = value;
+                Refresh();
+            }
         }
 
         /// <summary>Gets or sets the shield icon on the next button.</summary>
@@ -209,9 +260,10 @@ namespace AeroWizard
             get => pageContainer.SelectedPage;
             internal set
             {
-                pageContainer.SelectedPage = value; if ( value != null )
+                pageContainer.SelectedPage = value;
+                if ( value != null )
                 {
-                    HeaderText = value.Text;
+                    PageHeaderText = value.Text;
                 }
             }
         }
@@ -228,7 +280,7 @@ namespace AeroWizard
             set => pageContainer.ShowProgressInTaskbarIcon = value;
         }
 
-        /// <summary>Gets or sets a value indicating whether to suppress changing the parent form's caption to match the wizard's <see cref="Title"/>.</summary>
+        /// <summary>Gets or sets a value indicating whether to suppress changing the parent form's caption to match the wizard's <see cref="Text"/>.</summary>
         /// <value><c>true</c> to not change the parent form's caption (Text) to match this wizard's title; otherwise, <c>false</c>.</value>
         [Category( "Wizard" ), DefaultValue( false ), Description( "Indicates whether to suppress changing the parent form's caption to match the wizard's" )]
         public bool SuppressParentFormCaptionSync { get; set; }
@@ -238,37 +290,9 @@ namespace AeroWizard
         [Category( "Wizard" ), DefaultValue( false ), Description( "Indicates whether to suppress changing the parent form's icon to match the wizard's" )]
         public bool SuppressParentFormIconSync { get; set; }
 
-        /// <summary>Gets or sets the title for the wizard.</summary>
-        /// <value>The title text.</value>
-        [Category( "Wizard" ), Localizable( true ), Description( "Title for the wizard" )]
-        public string Title
-        {
-            get => title.Text;
-            set { title.Text = value; Invalidate(); }
-        }
 
-        /// <summary>Gets or sets the optionally displayed icon next to the wizard title.</summary>
-        /// <value>The title icon.</value>
-        [Category( "Wizard" ), Localizable( true ), Description( "Icon next to the wizard title" )]
-        public Icon TitleIcon
-        {
-            get => titleImageIcon;
-            set
-            {
-                titleImageIcon = value;
-                titleImageList.Images.Clear();
-                if ( titleImageIcon != null )
-                {
-                    // Resolve for different DPI settings and ensure that if icon is not a standard size, such as 20x20, that the larger one
-                    // (24x24) is downsized and not the smaller up-sized. (thanks demidov)
-                    titleImage.Size = titleImageList.ImageSize = SystemInformation.SmallIconSize;
-                    titleImageList.Images.Add( new Icon( value , SystemInformation.SmallIconSize + new Size( 1 , 1 ) ) );
-                    titleImage.ImageIndex = 0;
-                }
-                titleImageIconSet = true;
-                Invalidate();
-            }
-        }
+
+
 
         internal int SelectedPageIndex => pageContainer.SelectedPageIndex;
 
@@ -509,7 +533,7 @@ namespace AeroWizard
 
             if ( parentControl == null ) return;
 
-            if ( !SuppressParentFormCaptionSync ) parentControl.Text = Title;
+            if ( !SuppressParentFormCaptionSync ) parentControl.Text = Text;
 
             if ( parentControl is Form parentAsForm )
             {
@@ -562,7 +586,7 @@ namespace AeroWizard
         }
 
         private void Page_TextChanged ( object sender , EventArgs e )
-            => HeaderText = (( WizardPage )sender).Text;
+            => PageHeaderText = (( WizardPage )sender).Text;
 
         private void pageContainer_ButtonStateChanged ( object sender , EventArgs e )
         {
@@ -585,7 +609,7 @@ namespace AeroWizard
 
         private void pageContainer_SelectedPageChanged ( object sender , EventArgs e )
         {
-            if ( pageContainer.SelectedPage != null ) HeaderText = pageContainer.SelectedPage.Text;
+            if ( pageContainer.SelectedPage != null ) PageHeaderText = pageContainer.SelectedPage.Text;
             OnSelectedPageChanged();
         }
 
@@ -627,7 +651,7 @@ namespace AeroWizard
             => pageContainer.ResetNextButtonText();
 
         private void ResetTitle ()
-            => Title = Properties.Resources.WizardTitle;
+            => Text = Properties.Resources.WizardTitle;
 
         private void ResetTitleIcon ()
         {
@@ -712,7 +736,7 @@ namespace AeroWizard
             => pageContainer.ShouldSerializeNextButtonText();
 
         private bool ShouldSerializeTitle ()
-            => Title != Properties.Resources.WizardTitle;
+            => Text != Properties.Resources.WizardTitle;
 
         private bool ShouldSerializeTitleIcon ()
             => titleImageIconSet;
